@@ -43,10 +43,6 @@ describe('Notes api', function() {
                 expect(res).to.have.status(200);
                 expect(res.body).to.be.an('array');
                 expect(res.body).to.have.lengthOf.at.least(1);
-                return Note.count();
-            })
-            .then((count) => {
-                expect(res.body).to.have.lengthOf(count);
             })
         });
     });
