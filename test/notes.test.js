@@ -37,12 +37,15 @@ describe('Notes api', function() {
             return Note.find()
             .then(_data => {
                 data = _data;
+                expect(data).to.have.lengthOf.at.least(1);
+                expect(data).to.be.an('array');
                 return chai.request(app).get('/api/notes');
             })
             .then((res) => {
                 expect(res).to.have.status(200);
                 expect(res.body).to.be.an('array');
                 expect(res.body).to.have.lengthOf.at.least(1);
+                expect(res.body.count).to.equal(data.count);
             })
         });
     });
@@ -83,9 +86,7 @@ describe('Notes api', function() {
 
             let res;
             // 1) First, call the API
-            return chai.request(app)
-            .post('/api/notes')
-            .send(newItem)
+            return chai.request(app).post('/api/notes').send(newItem)
             .then(function (_res) {
                 res = _res;
                 expect(res).to.have.status(201);
@@ -104,6 +105,51 @@ describe('Notes api', function() {
                 expect(new Date(res.body.createdAt)).to.eql(data.createdAt);
                 expect(new Date(res.body.updatedAt)).to.eql(data.updatedAt);
             });
+        });
+    });
+
+    describe('UPDATE /api/notes/:id', function() {
+        it('should update and return an item when provided valid data', function () {
+            const updateData = {
+            'title': 'The best cats ever!',
+            'content': 'Lorem ipsum dolor sit amet cats.'
+            };
+            let res;
+            let data;
+            return Note.findOne()
+            .then(_data => {
+                data = _data;
+                // 2) then call the API with the ID
+                return chai.request(app).put(`/api/notes/${data.id}`).send(updateData)
+                .then(function(_res) {
+                    res = _res;
+                    expect(res.body).to.be.a('object');
+                    expect(res.body.title).to.equal(updateData.title);
+                    expect(res.body.content).to.equal(updateData.content);
+                    return Note.findByIdAndUpdate(data.id, {$set: updateData}, {new: true})
+                })
+                .then(function(_data) {
+                    data = _data
+                    expect(data.title).to.equal(updateData.title);
+                    expect(data.content).to.equal(updateData.content);
+                    expect(data).to.be.a('object');
+                })
+            })
+        });
+    });
+
+    describe('DELETE /api/notes/:id', function() {
+        it('should delete an item and return a 204 status', function() {
+            let note;
+            return Note.findOne()
+            .then(res => {
+                note = res;
+                return chai.request(app).delete(`/api/notes/${note.id}`)
+                .then(res => {
+                    expect(res.status).to.equal(204);
+                    return Note.findByIdAndDelete(note.id)
+                })
+            })
         });
     });
 });

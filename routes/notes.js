@@ -36,7 +36,7 @@ router.post('/', (req, res, next) => {
   const note = req.body;
   Note.create(note)
     .then(results => {
-      res.location('path/to/new/document').status(201).json(results);
+      res.location(`/api/notes/${note._id}`).status(201).json(results);
     })
     .catch(err => next(err));
 });
