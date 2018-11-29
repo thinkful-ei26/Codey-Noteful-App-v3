@@ -3,15 +3,19 @@
 const Note = require('../models/note');
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
-  const searchTerm = req.query.searchTerm;
+  const {searchTerm, folderId} = req.query;
+
   let filter = {};
   if (searchTerm) {
-    filter.title = { $regex: searchTerm, $options: 'i' };
     const re = new RegExp(searchTerm, 'i');
-    filter.$or = [{ 'title': re }, { 'content': re }];
+    filter = {$or: [{ 'title': re }, { 'content': re }] };
+  }
+  if (folderId) {
+    
   }
   Note.find(filter)
     .sort({ updatedAt: 'desc' })
@@ -34,6 +38,11 @@ router.get('/:id', (req, res, next) => {
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/', (req, res, next) => {
   const note = req.body;
+  if(note.folderId) {
+    if(!mongoose.Types.ObjectId.isValid(note.folderId)) {
+      res.status(404).send('Folder not found.')
+    }
+  }
   Note.create(note)
     .then(results => {
       res.location(`/api/notes/${note._id}`).status(201).json(results);
@@ -45,6 +54,11 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const id = req.params.id;
   const update = req.body;
+  if(update.folderId) {
+    if(!mongoose.Types.ObjectId.isValid(update.folderId)) {
+      res.status(404).send('Folder not found.')
+    }
+  }
   Note.findByIdAndUpdate(id, {$set: update}, {new: true})
     .then(results => {
       res.json(results);
