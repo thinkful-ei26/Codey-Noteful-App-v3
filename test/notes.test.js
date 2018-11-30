@@ -121,7 +121,7 @@ describe('Notes api', function() {
             const updateData = {
             'title': 'The best cats ever!',
             'content': 'Lorem ipsum dolor sit amet cats.',
-            'folderId': '111111111111111111111103'
+            'folderId': '111111111111111111111100'
             };
             let res;
             let data;
