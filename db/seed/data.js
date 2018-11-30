@@ -1,3 +1,22 @@
+const tags = [
+  {
+    "_id": "222222222222222222222200",
+    "name": "breed"
+  },
+  {
+    "_id": "222222222222222222222201",
+    "name": "hybrid"
+  },
+  {
+    "_id": "222222222222222222222202",
+    "name": "domestic"
+  },
+  {
+    "_id": "222222222222222222222203",
+    "name": "feral"
+  }
+]
+
 const folders = [
   {
     '_id': '111111111111111111111100',
@@ -68,4 +87,4 @@ const notes = [
   }
 ];
 
-module.exports = { folders, notes };
+module.exports = { tags, folders, notes };
