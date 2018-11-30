@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
     filter = {$or: [{ 'title': re }, { 'content': re }] };
   }
   if (folderId) {
-    
+    filter = {folderId};
   }
   Note.find(filter)
     .sort({ updatedAt: 'desc' })

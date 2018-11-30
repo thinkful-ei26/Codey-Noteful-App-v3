@@ -7,8 +7,9 @@ const app = require('../server');
 const { TEST_MONGODB_URI } = require('../config');
 
 const Note = require('../models/note');
+const Folder = require('../models/folder');
 
-const { notes } = require('../db/seed/data');
+const { notes, folders } = require('../db/seed/data');
 
 const expect = chai.expect;
 chai.use(chaiHttp);
@@ -17,6 +18,10 @@ describe('Notes api', function() {
     before(function () {
         return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true })
             .then(() => mongoose.connection.db.dropDatabase());
+    });
+
+    beforeEach(function () {
+        return Folder.insertMany(folders);
     });
 
     beforeEach(function () {
@@ -66,12 +71,12 @@ describe('Notes api', function() {
 
                 expect(res.body).to.be.an('object');
                 expect(res.body).to.have.keys('id', 'title', 'content', 'folderId', 'createdAt', 'updatedAt');
-
+                console.log('FLAG', data.folderId, res.body.folderId)
                 // 3) then compare database results to API response
                 expect(res.body.id).to.equal(data.id);
                 expect(res.body.title).to.equal(data.title);
                 expect(res.body.content).to.equal(data.content);
-                //expect(res.body.folderId).to.equal(data.folderId);
+                expect(res.body.folderId).to.equal(data.folderId.toString());
                 expect(new Date(res.body.createdAt)).to.eql(data.createdAt);
                 expect(new Date(res.body.updatedAt)).to.eql(data.updatedAt);
             });
@@ -82,7 +87,8 @@ describe('Notes api', function() {
         it('should create and return a new item when provided valid data', function () {
             const newItem = {
             'title': 'The best article about cats ever!',
-            'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...'
+            'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor...',
+            'folderId': '111111111111111111111103'
             };
 
             let res;
@@ -94,7 +100,7 @@ describe('Notes api', function() {
                 expect(res).to.have.header('location');
                 expect(res).to.be.json;
                 expect(res.body).to.be.a('object');
-                expect(res.body).to.have.keys('id', 'title', 'content', 'createdAt', 'updatedAt');
+                expect(res.body).to.have.keys('id', 'title', 'folderId', 'content', 'createdAt', 'updatedAt');
                 // 2) then call the database
                 return Note.findById(res.body.id);
             })
@@ -103,6 +109,7 @@ describe('Notes api', function() {
                 expect(res.body.id).to.equal(data.id);
                 expect(res.body.title).to.equal(data.title);
                 expect(res.body.content).to.equal(data.content);
+                expect(res.body.folderId).to.equal(data.folderId.toString());
                 expect(new Date(res.body.createdAt)).to.eql(data.createdAt);
                 expect(new Date(res.body.updatedAt)).to.eql(data.updatedAt);
             });
@@ -113,7 +120,8 @@ describe('Notes api', function() {
         it('should update and return an item when provided valid data', function () {
             const updateData = {
             'title': 'The best cats ever!',
-            'content': 'Lorem ipsum dolor sit amet cats.'
+            'content': 'Lorem ipsum dolor sit amet cats.',
+            'folderId': '111111111111111111111103'
             };
             let res;
             let data;
@@ -127,6 +135,7 @@ describe('Notes api', function() {
                     expect(res.body).to.be.a('object');
                     expect(res.body.title).to.equal(updateData.title);
                     expect(res.body.content).to.equal(updateData.content);
+                    expect(res.body.folderId).to.equal(data.folderId.toString());
                     return Note.findByIdAndUpdate(data.id, {$set: updateData}, {new: true})
                 })
                 .then(function(_data) {
