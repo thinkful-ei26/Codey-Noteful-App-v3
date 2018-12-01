@@ -6,7 +6,7 @@ const tagSchema = new mongoose.Schema({
 
 mongoose.set('timestamps', true);
 
-noteSchema.set('toJSON', {
+tagSchema.set('toJSON', {
     virtuals: true,
     transform: (doc, ret) => {
       delete ret._id;
