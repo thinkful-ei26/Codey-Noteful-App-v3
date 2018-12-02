@@ -22,7 +22,12 @@ router.get('/', (req, res, next) => {
   if (tagId) {
     filter = {tags: {$in: [tagId]}};
   }
-
+  if(folderId && tagId) {
+    filter = { '$and': [
+      {folderId},
+      {tags: {$in: [tagId]}},
+    ]}
+  }
   if(searchTerm && folderId && tagId) {
     filter = { '$and': [
       {folderId},
