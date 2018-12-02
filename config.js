@@ -1,7 +1,9 @@
 'use strict';
-//'mongodb://localhost:27017/noteful'
+//'mongodb://localhost:27017/noteful' for local env
+const keys = require('./keys');
+
 module.exports = {
   PORT: process.env.PORT || 8080,
-  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://admin:password1@ds119394.mlab.com:19394/notes',
-  TEST_MONGODB_URI: process.env.TEST_MONGODB_URI || 'mongodb://admin:password1@ds119394.mlab.com:19394/notes'
+  MONGODB_URI: process.env.MONGODB_URI || keys.MONGO_DB,
+  TEST_MONGODB_URI: process.env.TEST_MONGODB_URI || keys.MONGO_DB_DEV
 };

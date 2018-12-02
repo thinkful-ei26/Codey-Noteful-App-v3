@@ -56,7 +56,7 @@ router.put('/:id', (req, res, next) => {
     if(!mongoose.Types.ObjectId.isValid(id)) {
         res.status(404).send('Tag not found.')
     }
-    Tag.findByIdAndUpdate(id, {$set: update}, {new: true})
+    Tag.findByIdAndUpdate(id, update, {new: true})
       .then(results => {
         res.json(results);
       })

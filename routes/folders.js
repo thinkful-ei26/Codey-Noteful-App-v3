@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
     Folder.find()
-        .sort({ name: 'desc' })
+        .sort('name')
         .then(results => {
         res.json(results);
         })
@@ -57,7 +57,7 @@ router.put('/:id', (req, res, next) => {
     if(!mongoose.Types.ObjectId.isValid(id)) {
         res.status(404).send('Folder not found.')
     }
-    Folder.findByIdAndUpdate(id, {$set: update}, {new: true})
+    Folder.findByIdAndUpdate(id, update, {new: true})
       .then(results => {
         res.json(results);
       })

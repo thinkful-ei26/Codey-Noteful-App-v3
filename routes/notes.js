@@ -82,7 +82,7 @@ router.put('/:id', (req, res, next) => {
       }
     });
   }
-  Note.findByIdAndUpdate(id, {$set: update}, {new: true})
+  Note.findByIdAndUpdate(id, update, {new: true})
     .then(results => {
       res.json(results);
     })
