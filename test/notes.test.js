@@ -70,7 +70,7 @@ describe('Notes api', function() {
                 expect(res).to.be.json;
 
                 expect(res.body).to.be.an('object');
-                expect(res.body).to.have.keys('id', 'title', 'content', 'folderId', 'createdAt', 'updatedAt');
+                expect(res.body).to.have.keys('id', 'title', 'content', 'folderId', 'tags', 'createdAt', 'updatedAt');
                 console.log('FLAG', data.folderId, res.body.folderId)
                 // 3) then compare database results to API response
                 expect(res.body.id).to.equal(data.id);
@@ -100,7 +100,7 @@ describe('Notes api', function() {
                 expect(res).to.have.header('location');
                 expect(res).to.be.json;
                 expect(res.body).to.be.a('object');
-                expect(res.body).to.have.keys('id', 'title', 'folderId', 'content', 'createdAt', 'updatedAt');
+                expect(res.body).to.have.keys('id', 'title', 'folderId', 'content', 'tags', 'createdAt', 'updatedAt');
                 // 2) then call the database
                 return Note.findById(res.body.id);
             })

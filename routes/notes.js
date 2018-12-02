@@ -10,9 +10,10 @@ const mongoose = require('mongoose');
 router.get('/', (req, res, next) => {
   const {searchTerm, folderId, tagId} = req.query;
 
-  let filter = {};
+  let filter;
+  let re;
   if (searchTerm) {
-    const re = new RegExp(searchTerm, 'i');
+    re = new RegExp(searchTerm, 'i');
     filter = {$or: [{ 'title': re }, { 'content': re }] };
   }
   if (folderId) {
@@ -20,6 +21,14 @@ router.get('/', (req, res, next) => {
   }
   if (tagId) {
     filter = {tags: {$in: [tagId]}};
+  }
+
+  if(searchTerm && folderId && tagId) {
+    filter = { '$and': [
+      {folderId},
+      {tags: {$in: [tagId]}},
+      {$or: [{ 'title': re }, { 'content': re }] }
+    ]}
   }
   
   Note.find(filter)
